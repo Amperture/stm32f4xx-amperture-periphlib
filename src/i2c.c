@@ -33,30 +33,30 @@ void i2cInit(I2C_TypeDef I2Cx, GPIO_TypeDef GPIOx, uint8_t sclPin,
     // Set up the First Control Register
     // NOTE: Users, please comment out unnecessary bits.
     I2Cx -> CR1     =   (0
-                        // + I2C_CR1_SMBUS         // SMBus Mode
-                        // + I2C_CR1_SMBTYPE       // SMBus Type
-                        + I2C_CR1_ENARP         // ARP Enable
-                        + I2C_CR1_ENPEC         // PEC Enable
-                        + I2C_CR1_ENGC          // General Call Enable
-                        + I2C_CR1_NOSTRETCH     // (SLV)ClockStretchDisable
-                        + I2C_CR1_START         // Start Gen Enable
-                        + I2C_CR1_STOP          // Stop Gen Enable
-                        + I2C_CR1_ACK           // Enable Acknowledge
-                        + I2C_CR1_POS           // ACK/PEC postition (rec)
-                        + I2C_CR1_PEC           // Packet Error Check
-                        // + I2C_CR1_ALERT         // SMB Alert
-                        // + I2C_CR1_SWRST         // Soft Reset
+                        // | I2C_CR1_SMBUS         // SMBus Mode
+                        // | I2C_CR1_SMBTYPE       // SMBus Type
+                        | I2C_CR1_ENARP         // ARP Enable
+                        | I2C_CR1_ENPEC         // PEC Enable
+                        | I2C_CR1_ENGC          // General Call Enable
+                        | I2C_CR1_NOSTRETCH     // (SLV)ClockStretchDisable
+                        | I2C_CR1_START         // Start Gen Enable
+                        | I2C_CR1_STOP          // Stop Gen Enable
+                        | I2C_CR1_ACK           // Enable Acknowledge
+                        | I2C_CR1_POS           // ACK/PEC postition (rec)
+                        | I2C_CR1_PEC           // Packet Error Check
+                        // | I2C_CR1_ALERT         // SMB Alert
+                        // | I2C_CR1_SWRST         // Soft Reset
                         );
 
     // Set up the Second Control Register
     // NOTE: Users, please comment out unnecessary bits.
     I2Cx -> CR2     =   (0
-                        + (I2C_CR2_FREQ & 2)    // Frequency
-                        // + I2C_CR2_ITERREN       // Error Int Enable
-                        // + I2C_CR2_ITEVTEN       // Event Int Enable
-                        // + I2C_CR2_ITBUFEN       // Buffer Int Enable
-                        // + I2C_CR2_DMAEN         // DMA Request Enable
-                        // + I2C_CR2_LAST          // DMA Last Transfer
+                        | (I2C_CR2_FREQ & 2)    // Frequency
+                        // | I2C_CR2_ITERREN       // Error Int Enable
+                        // | I2C_CR2_ITEVTEN       // Event Int Enable
+                        // | I2C_CR2_ITBUFEN       // Buffer Int Enable
+                        // | I2C_CR2_DMAEN         // DMA Request Enable
+                        // | I2C_CR2_LAST          // DMA Last Transfer
                         );
 
     // Re-Enable the I2C Peripheral
