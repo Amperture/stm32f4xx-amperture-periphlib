@@ -63,12 +63,9 @@ void i2cInit(I2C_TypeDef I2Cx, GPIO_TypeDef GPIOx, uint8_t sclPin,
     I2Cx -> CR1     |=  I2C_CR1_PE;
 
     // Set GPIO Pins to Alternate Function Mode, High Speed, NoPull, 
-    GPIOx -> MODER      |=  (0x02 << (2 * sclPin));
-    GPIOx -> OSPEEDR    |=  (0x03 << (2 * sclPin));
-    GPIOx -> PUPDR      &=  ~(0x03 << (2 * sclPin));
-    GPIOx -> MODER      |=  (0x02 << (2 * sdaPin));
-    GPIOx -> OSPEEDR    |=  (0x03 << (2 * sdaPin));
-    GPIOx -> PUPDR      &=  ~(0x03 << (2 * sdaPin));
+    GPIOx -> MODER      |=  (0x02 << (2 * sclPin) + 0x02 << (2 * sdaPin));
+    GPIOx -> OSPEEDR    |=  (0x03 << (2 * sclPin) + 0x03 << (2 * sdaPin));
+    GPIOx -> PUPDR      &=  ~(0x03 << (2 * sclPin) + 0x03 << (2 * sdaPin));
 
     // Set the GPIO Pins to the appropriate Alternate Function Setting
     // Please refer to the datasheet for which numbers to use.
