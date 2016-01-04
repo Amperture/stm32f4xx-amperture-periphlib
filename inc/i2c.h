@@ -11,8 +11,12 @@
  * stm32f4xx-amperture-periphlib package.
  */
 
+#ifndef AMP_I2C_H
+#define AMP_I2C_H
 
 // Public Functions
 void i2cInit(I2C_TypeDef, GPIO_TypeDef);
 void i2cWriteOne();
 uint8_t i2cReadOne();
+
+#endif /* AMP_I2C_H */
