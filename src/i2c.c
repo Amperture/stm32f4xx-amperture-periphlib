@@ -1,6 +1,7 @@
 /**
  * @file i2c.c
  * @author W. Alex Best
+ * @website http://www.amperture.com
  * @date 3 Jan 2016
  * @brief File containing driver functions for i2c peripheral on stm32f4xx.
  *
@@ -20,6 +21,16 @@
 #include <stm32f4xx.h>
 
 
+/** I2C Init
+ * @brief Init function for i2c peripheral.
+ * @param *I2Cx: Which I2C internal peripheral to use.
+ * @param *GPIOx: Which GPIO Port to use.
+ * @param sclPin: GPIO pin to use for SCL, send as integer, NOT Bitmask.
+ * @param sdaPin: GPIO pin to use for SDA, send as integer, NOT Bitmask.
+ * @param afMode: Alternate Function mode for GPIO pins, refer to datasheet.
+ * @retval void
+ * @see http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00102166.pdf
+ */
 void i2cInit(I2C_TypeDef I2Cx, GPIO_TypeDef GPIOx, uint8_t sclPin,
         uint8_t sdaPin, uint8_t afMode){
 
