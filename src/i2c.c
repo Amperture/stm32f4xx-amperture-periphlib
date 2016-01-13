@@ -3,7 +3,7 @@
  * @author W. Alex Best
  * @website http://www.amperture.com
  * @date 3 Jan 2016
- * @brief File containing driver functions for i2c peripheral on stm32f4xx.
+ * @brief I2C Peripheral Driver Code for stm32f4xx
  *
  * This file contains private and public functions for using the I2C peripheral
  * on an stm32f4xx microcontroller. Comes as part of the 
@@ -15,8 +15,9 @@
  * read the functions they are calling, and edit them accordingly to their 
  * needs.
  *
- * @see http://www.st.com/web/en/resource/technical/document/programming_manual/DM00046982.pdf
+ * @see http://www.st.com/web/en/resource/technical/document/reference_manual/DM00096844.pdf
  */
+
 
 #include <stm32f4xx.h>
 
