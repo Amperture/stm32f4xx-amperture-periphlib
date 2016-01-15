@@ -115,3 +115,18 @@ void spiByteSend(SPI_TypeDef SPIx, uint8_t data){
     // Feed Data Register
     SPIx -> DR = data; 
 }
+
+/** Receive Single Byte
+ * @brief Pulls a single byte over the configured SPI peripheral.
+ * @param *SPIx: Which SPI peripheral to send data over.
+ * @retval The value pulled from the SPI peripheral.
+ */
+uint8_t spiByteReceive(SPI_TypeDef SPIx, uint8_t data){
+
+    // Wait until receive buffer is not empty.
+    while( (SPIx -> SPI_SR_BSY) ){}; 
+    while( !(SPIx -> SPI_SR_RXNE) ){}; 
+
+    // Feed Data Register
+    return SPIx -> DR; 
+}
