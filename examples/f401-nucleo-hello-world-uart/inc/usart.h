@@ -13,8 +13,11 @@
 #ifndef AMP_USART_H
 #define AMP_USART_H
 
+#define AMP_USART_FCLK_SPEED 16000000
+#define AMP_USART_BAUD_RATE 115200
+
 // Public Functions
-void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef* GPIOx, uint8_t txPin,
+void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef *GPIOx, uint8_t txPin,
         uint8_t rxPin, uint8_t ctsPin, uint8_t rtsPin, 
         uint8_t ckPin, uint8_t afMode);
 void usartByteSend(USART_TypeDef *USARTx, uint8_t data);

@@ -1,5 +1,5 @@
 /**
- * @file i2c.h
+ * @file spi.h
  * @author W. Alex Best
  * @date 6 Jan 2016
  * @website http://www.amperture.com

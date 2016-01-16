@@ -25,7 +25,7 @@ void spiInit(SPI_TypeDef *SPIx, GPIO_TypeDef *GPIOx, uint8_t mosiPin,
     SPIx -> CR1     &=  ~(SPI_CR1_SPE);
 
     SPIx -> CR1     =   (0
-                        | SPI_CR1_CPHA  // Clock Phase, 0 = 1st Edge, 1 = 2nd
+                        // | SPI_CR1_CPHA  // Clock Phase, 0 = 1st Edge, 1 = 2nd
                         // | SPI_CR1_CPOL  // Clock Polariy, 0=Rising, 1=Falling
                         | SPI_CR1_MSTR  // Master Enable
                         // | SPI_CR1_LSBFIRST  // Lowest Significant Bit First
