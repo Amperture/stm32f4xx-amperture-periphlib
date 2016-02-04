@@ -15,8 +15,12 @@
 #define AMP_I2C_H
 
 // Public Functions
-void i2cInit(I2C_TypeDef, GPIO_TypeDef);
-void i2cWriteOne();
-uint8_t i2cReadOne();
+void i2cInit(I2C_TypeDef* , GPIO_TypeDef* , uint8_t, uint8_t, uint8_t);
+void i2cSendStop(I2C_TypeDef* , GPIO_TypeDef* );
+void i2cSendAddr7bit(I2C_TypeDef*, uint8_t, uint8_t);
+void i2cSendData(I2C_TypeDef*, uint8_t);
+uint8_t i2cRecvData(I2C_TypeDef*);
+uint8_t i2cStateCheck(I2C_TypeDef*, uint16_t, uint16_t);
+
 
 #endif /* AMP_I2C_H */

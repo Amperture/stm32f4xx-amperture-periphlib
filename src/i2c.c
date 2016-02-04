@@ -20,6 +20,7 @@
 
 
 #include <stm32f4xx.h>
+#include "i2c.h"
 
 
 /** I2C Init
@@ -29,10 +30,9 @@
  * @param sclPin: GPIO pin to use for SCL, send as integer, NOT Bitmask.
  * @param sdaPin: GPIO pin to use for SDA, send as integer, NOT Bitmask.
  * @param afMode: Alternate Function mode for GPIO pins, refer to datasheet.
- * @retval void
  * @see http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00102166.pdf
  */
-void i2cInit(I2C_TypeDef I2Cx, GPIO_TypeDef GPIOx, uint8_t sclPin,
+void i2cInit(I2C_TypeDef* I2Cx, GPIO_TypeDef GPIOx, uint8_t sclPin,
         uint8_t sdaPin, uint8_t afMode){
 
     // Enable the I2C and GPIO Clocks in the RCC
@@ -49,11 +49,9 @@ void i2cInit(I2C_TypeDef I2Cx, GPIO_TypeDef GPIOx, uint8_t sclPin,
                         // | I2C_CR1_SMBTYPE       // SMBus Type
                         | I2C_CR1_ENARP         // ARP Enable
                         | I2C_CR1_ENPEC         // PEC Enable
+                        | I2C_CR1_ACK           // ACK Enable
                         | I2C_CR1_ENGC          // General Call Enable
                         | I2C_CR1_NOSTRETCH     // (SLV)ClockStretchDisable
-                        | I2C_CR1_START         // Start Gen Enable
-                        | I2C_CR1_STOP          // Stop Gen Enable
-                        | I2C_CR1_ACK           // Enable Acknowledge
                         | I2C_CR1_POS           // ACK/PEC postition (rec)
                         | I2C_CR1_PEC           // Packet Error Check
                         // | I2C_CR1_ALERT         // SMB Alert
@@ -91,3 +89,75 @@ void i2cInit(I2C_TypeDef I2Cx, GPIO_TypeDef GPIOx, uint8_t sclPin,
 
 }
 
+/** I2C Send Start
+ * @brief Sends the Start Bit on the I2C Peripheral.
+ * @param *I2Cx: Which peripheral to send the Start bit over.
+ */
+void i2cSendStart(I2C_TypeDef* I2Cx){
+    I2Cx -> CR1     |=  I2C_CR1_START;
+}
+
+/** I2C Send Stop
+ * @brief Sends the Stop Bit on the I2C Peripheral.
+ * @param *I2Cx: Which peripheral to send the Stop bit over.
+ */
+void i2cSendStop(I2C_TypeDef* I2Cx){
+    I2Cx -> CR1     |=  I2C_CR1_STOP;
+}
+
+/** I2C Send 7 Bit Address
+ * @brief Sends the 7 Bit Address call over the I2C peripheral.
+ * @param *I2Cx: Which peripheral to send the ACK bit over.
+ * @param addr: 7 Bit Address
+ * @param dir: 0 = Write, 1 = Read
+ */
+void i2cSendAddr7bit(I2C_TypeDef* I2Cx, uint8_t addr, uint8_t dir){
+    if (dir != 0){
+        addr = (addr << 1) | 0x01;
+    } else {
+        addr = (addr << 1) & ~(0x01);
+    }
+
+    I2Cx -> DR  =   addr;
+}
+
+/** I2C Send Byte
+ * @brief Sends an 8 bit data value over the I2C peripheral.
+ * @param *I2Cx: Which peripheral to send the ACK bit over.
+ * @param data: byte to send
+ * @retval void
+ */
+void i2cSendData(I2C_TypeDef* I2Cx, uint8_t data){
+    I2Cx -> DR = data;
+}
+
+/** I2C Receive Byte
+ * @brief Retreives the data on the I2C peripheral.
+ * @param *I2Cx: Which peripheral to send the ACK bit over.
+ * @retval Byte pulled from I2C Data Register
+ */
+uint8_t i2cRecvData(I2C_TypeDef* I2Cx){
+    return (uint8_t) I2Cx -> DR;
+}
+
+/** I2C State Check
+ * @brief Check the state of both status registers on the I2C Peripheral.
+ * @param *I2Cx: Where x can be 1, 2, or 3.
+ * @param i2cStateSR1: Status Register 1 state desired.
+ * @param i2cStateSR2: Status Register 2 state desired.
+ * @retval Will return 1 for success, 0 for failure.
+ * 
+ * TODO: Don't like the fact that StdPeriph uses single variable for 
+ * I2C_CheckEvent(), but that allows them to use preprocessor macros for 
+ * states, giving better readability. Think about this one and look for a 
+ * desired solution.
+ */
+uint8_t i2cStateCheck(I2C_TypeDef* I2Cx, uint16_t stateSR1, uint16_t stateSR2){
+    uint16_t i2cSR1Mask = (I2Cx -> SR1) & stateSR1;
+    uint16_t i2cSR2Mask = (I2Cx -> SR2) & stateSR2 & 0x00FF;
+
+    if ( (stateSR1 != 0) && (i2cSR1Mask != stateSR1) ) return 0;
+    if ( (stateSR2 != 0) && (i2cSR2Mask != stateSR2) ) return 0;
+
+    return 1;
+}
