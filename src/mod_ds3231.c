@@ -14,7 +14,6 @@
  *  --- 0x04 -- Day of Month 
  *  --- 0x05 -- Month ( 1 - 12 )
  *  --- 0x05 -- Year ( 00 - 99 ) 
- *  --- 0x07 -- Minutes
  */
 
 void ds3231_readDate(I2C_TypeDef* I2Cx, ds3231Date* date){
@@ -71,15 +70,60 @@ void ds3231_readDate(I2C_TypeDef* I2Cx, ds3231Date* date){
     return;
 }
 
+void ds3231_writeDate(I2C_TypeDef* I2Cx, ds3231Date* date){
+    uint8_t buffer[7];
+    uint8_t i;
+
+    _ds3231_dateConvert_fromReadToRaw(date);
+    buffer[0] = date.second;
+    buffer[1] = date.minute;
+    buffer[2] = date.hour;
+    buffer[3] = date.dayOfWeek;
+    buffer[4] = date.dayOfMonth;
+    buffer[5] = date.month;
+    buffer[6] = date.year;
+
+    i2cActivateAck(I2Cx);
+
+    i2cSendStart(I2Cx);
+    while ( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_MODE_ACTIVE_SR2));
+
+    i2cSendAddr7bit(I2Cx, DS3231_MODULE_ADDR, 0);
+    while ( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR2));
+
+    i2cSendData(I2Cx, DS3231_SECONDS_REGISTER);
+    while ( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_TRANSMITTED_SR1,
+                I2C_STATE_MASTER_BYTE_TRANSMITTED_SR2));
+
+    for(i = 0; i < 7, i++){
+        i2cSendData(I2Cx, buffer[i]);
+        while ( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_TRANSMITTED_SR1,
+                    I2C_STATE_MASTER_BYTE_TRANSMITTED_SR2));
+    }
+}
+
 //// Private Functions
 
 // Converts data from raw device output to psuedo-human-readable
 // See https://datasheets.maximintegrated.com/en/ds/DS3231.pdf
-void _ds3231_dateConvert(ds3231Date* raw){
-    dateInput.second = ((raw.second & 0x0f) + ((raw.second >> 4)*10));
-    dateInput.minute = ((raw.minute & 0x0f) + ((raw.minute >> 4)*10));
-    dateInput.hour = ((raw.hour & 0x0f) + ((raw.hour >> 4)*10));
-    dateInput.dayOfMonth = ((raw.dayOfMonth & 0x0f) + ((raw.dayOfMonth >> 4)*10));
-    dateInput.year = ((raw.year & 0x0f) + ((raw.year >> 4)*10));
+void _ds3231_dateConvert_fromRawToRead(ds3231Date* raw){
+    raw.second = ((raw.second & 0x0f) + ((raw.second >> 4)*10));
+    raw.minute = ((raw.minute & 0x0f) + ((raw.minute >> 4)*10));
+    raw.hour = ((raw.hour & 0x0f) + ((raw.hour >> 4)*10));
+    raw.dayOfMonth = ((raw.dayOfMonth & 0x0f) + 
+            ((raw.dayOfMonth >> 4)*10));
+    raw.year = ((raw.year & 0x0f) + ((raw.year >> 4)*10));
     // Don't worry, Day Of Week is already in human-readable. 
 }
+
+void _ds3131_dateConvert_fromReadToRaw(ds3231Date* raw){
+    raw.second = ((raw.second/10) << 4) + (raw.second % 10);
+    raw.minute = ((raw.minute/10) << 4) + (raw.minute % 10);
+    raw.hour = ((raw.hour/10) << 4) + (raw.hour % 10);
+    raw.dayOfMonth = ((raw.dayOfMonth/10) << 4) + (raw.dayOfMonth % 10);
+    raw.year = ((raw.year/10) << 4) + (raw.year % 10);
+}
+
+
