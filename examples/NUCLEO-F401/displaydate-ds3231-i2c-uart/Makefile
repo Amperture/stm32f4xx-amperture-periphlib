@@ -19,7 +19,7 @@ GDB = $(TOOLPREFIX)gdb
 # ########################
 # Project Info
 # ########################
-SOURCES = system_stm32f4xx.c main.c usart.c i2c.c
+SOURCES = system_stm32f4xx.c mod_ds3231.c main.c usart.c i2c.c 
 TARGET = main
 BUILD_DIR = build
 LD_SCRIPT = ./system/STM32F401CE_FLASH.ld

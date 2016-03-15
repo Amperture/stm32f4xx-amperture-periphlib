@@ -65,7 +65,7 @@ void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef* GPIOx, uint8_t txPin,
                         // | USART_CR1_RWU     // Receiver Wakeup
                                             // TODO: Research Further
                                             
-                        // | USART_CR1_RE      // Receiver Enable
+                        | USART_CR1_RE      // Receiver Enable
                         | USART_CR1_TE      // Transmitter Enable
                         // | USART_CR1_IDLEIE  // IDLE Interrupt Enable
                                             // Research further
@@ -168,8 +168,10 @@ void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef* GPIOx, uint8_t txPin,
  * @retval 8-bit data pulled from USART.
  */
 uint8_t usartByteReceive(USART_TypeDef* USARTx){
-    while( !(USARTx -> SR && USART_SR_RXNE));
-    return USARTx -> DR;
+    uint8_t data = 0;
+    while( !((USARTx -> SR) & USART_SR_RXNE));
+    data = USARTx -> DR;
+    return data;
 }
 
 /** USART Send Single Byte
@@ -178,7 +180,7 @@ uint8_t usartByteReceive(USART_TypeDef* USARTx){
  * @param data: Byte to send.
  */
 void usartByteSend(USART_TypeDef* USARTx, uint8_t data){
-    while( !(USARTx -> SR && USART_SR_TXE));
+    while( !(USARTx -> SR & USART_SR_TXE));
     USARTx -> DR = data;
 }
 

@@ -20,7 +20,7 @@
 
 #include <stm32f4xx.h>
 #include <stdint.h>
-#include "usart.h"
+#include <usart.h>
 
 /** USART Init
  * @brief Init function for USART peripheral.
@@ -59,32 +59,33 @@ void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef* GPIOx, uint8_t txPin,
 
     // Configure Peripheral
     USARTx -> CR1   =   (0
-                        | USART_CR1_SBK     // Send Break Character Enable
+                        // | USART_CR1_SBK     // Send Break Character Enable
                                             // TODO: Research SBK Further
 
-                        | USART_CR1_RWU     // Receiver Wakeup
+                        // | USART_CR1_RWU     // Receiver Wakeup
                                             // TODO: Research Further
                                             
                         | USART_CR1_RE      // Receiver Enable
                         | USART_CR1_TE      // Transmitter Enable
-                        | USART_CR1_IDLEIE  // IDLE Interrupt Enable
+                        // | USART_CR1_IDLEIE  // IDLE Interrupt Enable
                                             // Research further
                                             
-                        | USART_CR1_RXNEIE  // Receiver Not Empty Int. Enable
-                        | USART_CR1_TCIE    // Transmission Complete Int.Enable
-                        | USART_CR1_TXEIE   // Transmitter Empty Int.Enable
+                        // | USART_CR1_RXNEIE  // Receiver Not Empty Int. Enable
+                        // | USART_CR1_TCIE    // Transmission Complete Int.Enable
+                        // | USART_CR1_TXEIE   // Transmitter Empty Int.Enable
 
-                        | USART_CR1_PCE     // Parity Control Enable
-                        | USART_CR1_PS      // Parity Selection, 0=Even, 1=Odd
-                        | USART_CR1_PEIE    // Parity Error Interrupt Enable
+                        // | USART_CR1_PCE     // Parity Control Enable
+                        // | USART_CR1_PS      // Parity Selection, 0=Even, 1=Odd
+                        // | USART_CR1_PEIE    // Parity Error Interrupt Enable
 
-                        | USART_CR1_WAKE    // Wake method,0=IdleLine,1=AddrMk
-                        | USART_CR1_M       // Word Length,0=8DataBits,1=9Data
+                        // | USART_CR1_WAKE    // Wake method,0=IdleLine,1=AddrMk
+                        // | USART_CR1_M       // Word Length,0=8DataBits,1=9Data
 
                         // | USART_CR1_OVER8   // Oversampling Mode, 0=16, 1=8
                                             // TODO: Research Further
                         );
 
+    /*
     USARTx -> CR2   |=  (0
                         | USART_CR2_LINEN   // LIN Enable TODO: Research
                         | USART_CR2_ADD     // Address of Node TODO:4-Bit
@@ -126,6 +127,7 @@ void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef* GPIOx, uint8_t txPin,
                         | USART_GTPR_PSC    // Prescalar Val: TODO: 8-Bit
                         | USART_GTPR_GT     // Guard Time TODO: 8-Bit
                         );
+    */
 
     USARTx -> BRR   =   AMP_USART_FCLK_SPEED / AMP_USART_BAUD_RATE;
 
@@ -148,15 +150,15 @@ void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef* GPIOx, uint8_t txPin,
     // http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00102166.pdf
     // Page 45
     // TODO: Make this prettier and more readable for future maintainers.
-    if(rxPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (rxPin - 7)));
+    if(rxPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (rxPin - 8)));
     else GPIOx -> AFR[0] |= (afMode << (4 * rxPin));
-    if(txPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (txPin - 7)));
+    if(txPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (txPin - 8)));
     else GPIOx -> AFR[0] |= (afMode << (4 * txPin));
-    if(ckPin  > 7) GPIOx -> AFR[1] |= (afMode << (4 * (ckPin  - 7)));
+    if(ckPin  > 7) GPIOx -> AFR[1] |= (afMode << (4 * (ckPin  - 8)));
     else GPIOx -> AFR[0] |= (afMode << (4 * ckPin));
-    if(ctsPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (ctsPin - 7)));
+    if(ctsPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (ctsPin - 8)));
     else GPIOx -> AFR[0] |= (afMode << (4 * ctsPin));
-    if(rtsPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (rtsPin - 7)));
+    if(rtsPin > 7) GPIOx -> AFR[1] |= (afMode << (4 * (rtsPin - 8)));
     else GPIOx -> AFR[0] |= (afMode << (4 * rtsPin));
 }
 
@@ -166,8 +168,10 @@ void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef* GPIOx, uint8_t txPin,
  * @retval 8-bit data pulled from USART.
  */
 uint8_t usartByteReceive(USART_TypeDef* USARTx){
-    while( !(USARTx -> SR && USART_SR_RXNE));
-    return USARTx -> DR;
+    uint8_t data = 0;
+    while( !((USARTx -> SR) & USART_SR_RXNE));
+    data = USARTx -> DR;
+    return data;
 }
 
 /** USART Send Single Byte
@@ -176,7 +180,7 @@ uint8_t usartByteReceive(USART_TypeDef* USARTx){
  * @param data: Byte to send.
  */
 void usartByteSend(USART_TypeDef* USARTx, uint8_t data){
-    while( !(USARTx -> SR && USART_SR_TXE));
+    while( !(USARTx -> SR & USART_SR_TXE));
     USARTx -> DR = data;
 }
 

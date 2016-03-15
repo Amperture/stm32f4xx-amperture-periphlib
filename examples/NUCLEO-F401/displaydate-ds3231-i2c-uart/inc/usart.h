@@ -14,7 +14,7 @@
 #define AMP_USART_H
 
 #define AMP_USART_FCLK_SPEED 16000000
-#define AMP_USART_BAUD_RATE 9600
+#define AMP_USART_BAUD_RATE 115200
 
 // Public Functions
 void usartInit(USART_TypeDef* USARTx, GPIO_TypeDef *GPIOx, uint8_t txPin,
