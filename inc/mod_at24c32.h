@@ -10,7 +10,7 @@
 #include "i2c.h"
 
 
-#define AT24C32_DEVICE_ADDRESS 0x50 
+#define AT24C32_DEVICE_ADDRESS 0x57
 
 /* Write Single Byte to given 12-bit address
  *     High bits of address are DONTCARES
