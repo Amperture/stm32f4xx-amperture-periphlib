@@ -39,6 +39,53 @@ uint8_t at24c32_writeByte(I2C_TypeDef* I2Cx, uint8_t toWrite, uint16_t addr){
 
 }
 
+uint8_t at24c32_readByte(I2C_TypeDef* I2Cx, uint16_t addr){
+    
+    // Convert 16 bit address into 8-bit chunks
+    uint8_t memAd[2];
+    memAd[0] = (uint8_t) (0x00FF & addr);
+    memAd[1] = (uint8_t) ((0xFF00 & addr) >> 8);
+
+    i2cActivateAck(I2Cx);
+
+    // Start bit
+    i2cSendStart(I2Cx);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_MODE_ACTIVE_SR2));
+
+    // Address
+    i2cSendAddr7bit(I2Cx, AT24C32_DEVICE_ADDRESS, 0);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR2));
+
+    // Send Memory Address
+    i2cSendData(I2Cx, memAd[0]);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_TRANSMITTED_SR1,
+                I2C_STATE_MASTER_BYTE_TRANSMITTED_SR2));
+    i2cSendData(I2Cx, memAd[1]);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_TRANSMITTED_SR1,
+                I2C_STATE_MASTER_BYTE_TRANSMITTED_SR2));
+
+    // Re-START
+    i2cSendStart(I2Cx);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_MODE_ACTIVE_SR2));
+
+    // Re-ADDRESS, with a read bit this time instead of write.
+    i2cSendAddr7bit(I2Cx, AT24C32_DEVICE_ADDRESS, 1);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR2));
+/*
+    while ( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_RECEIVED_SR1,
+                I2C_STATE_MASTER_BYTE_RECEIVED_SR2));
+    buffer[i] = i2cRecvData(I2Cx);
+*/
+
+    while ( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_RECEIVED_SR1,
+                I2C_STATE_MASTER_BYTE_RECEIVED_SR2));
+    return i2cRecvData(I2Cx);
+}
+
 /** IGNORE EVERYTHING INSIDE COMMENT
  *
 uint8_t at24c32_writeByteMulti(I2C_TypeDef* I2Cx, 
@@ -46,7 +93,6 @@ uint8_t at24c32_writeByteMulti(I2C_TypeDef* I2Cx,
         uint16_t addr, 
         uint8_t len);
 
-uint8_t at24c32_readByte(I2C_TypeDef* I2Cx, uint16_t addr);
 
 uint8_t* at24c32_readByteMulti(I2C_TypeDef* I2Cx, 
         uint16_t addr, 
