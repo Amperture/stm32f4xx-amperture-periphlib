@@ -11,6 +11,7 @@
 
 
 #define AT24C32_DEVICE_ADDRESS 0x57
+#define AT24C32_MAX_BUS_TIME 1716
 
 /* Write Single Byte to given 12-bit address
  *     High bits of address are DONTCARES
