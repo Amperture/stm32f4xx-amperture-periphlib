@@ -23,17 +23,6 @@
 // Valid values for SPI_BAUD_RATE: 0 - 7
 #define AMP_SPI_BAUD_RATE 0
 
-/** SPI Init
- * @brief Init function for spi peripheral.
- * @param *SPIx: Which SPI internal peripheral to use.
- * @param *GPIOx: Which GPIO Port to use.
- * @param mosiPin: GPIO Pin to use for MOSI, send as integer, NOT Bitmask.
- * @param misoPin: GPIO Pin to use for MISO, send as integer, NOT Bitmask.
- * @param sckPin: GPIO Pin to use for SCK, send as integer, NOT Bitmask.
- * @param afMode: Alternate Function mode for GPIO pins, refer to datasheet.
- * @retval void
- * @see http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00102166.pdf
- */
 void spiInit(SPI_TypeDef *SPIx, GPIO_TypeDef *GPIOx, uint8_t mosiPin,
         uint8_t misoPin, uint8_t sckPin, uint8_t afMode){
 
@@ -101,11 +90,6 @@ void spiInit(SPI_TypeDef *SPIx, GPIO_TypeDef *GPIOx, uint8_t mosiPin,
     else GPIOx -> AFR[0] |= (afMode << (4 * sckPin));
 }
 
-/** Send Single Byte
- * @brief Sends a single byte over the configured SPI peripheral.
- * @param *SPIx: Which SPI peripheral to send data over.
- * @param data: Byte to send.
- */
 void spiByteSend(SPI_TypeDef SPIx, uint8_t data){
 
     // Wait until transmit buffer is empty.
@@ -116,11 +100,6 @@ void spiByteSend(SPI_TypeDef SPIx, uint8_t data){
     SPIx -> DR = data; 
 }
 
-/** Receive Single Byte
- * @brief Pulls a single byte over the configured SPI peripheral.
- * @param *SPIx: Which SPI peripheral to send data over.
- * @retval The value pulled from the SPI peripheral.
- */
 uint8_t spiByteReceive(SPI_TypeDef SPIx, uint8_t data){
 
     // Wait until receive buffer is not empty.
