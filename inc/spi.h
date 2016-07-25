@@ -15,7 +15,6 @@
 
 // Public Functions
 
-
 /** SPI Init
  * @brief Init function for spi peripheral.
  * @param *SPIx: Which SPI internal peripheral to use.
