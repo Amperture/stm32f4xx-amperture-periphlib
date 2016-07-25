@@ -53,15 +53,25 @@ uint8_t at24c32_writeByteMulti(I2C_TypeDef* I2Cx,
  */
 uint8_t at24c32_readByte(I2C_TypeDef* I2Cx, uint16_t addr);
 
-/* EVERYTHING BELOW THIS LINE CONSIDER WIP.
- *
 /* Read Multiple Bytes from supplied 12-bit address.
- *     High bits of address are DONTCARES
- *     No Max Read Limit
-uint8_t* at24c32_readByteMulti(I2C_TypeDef* I2Cx, 
+ *
+ * @brief Read a series of 8-bit values from the device.
+ * Please note that the high bits of the \c addr are \c DONTCARE
+ *
+ * @param *I2Cx: Which I2C peripheral AT24C32 is attached to.
+ * @param addr: Memory address on device to pull byte from.
+ * @param len: Length of data array to read from device
+ *
+ * @retval System returns the contents of the memory location.
+ */
+uint8_t at24c32_readByteMulti(I2C_TypeDef* I2Cx, 
         uint16_t addr, 
-        uint8_t len);
+        uint8_t len
+        uint8_t* toRead
+);
 
+/* EVERYTHING BELOW THIS LINE CONSIDER WIP.
+  
 uint8_t at24c32_write16bit(I2C_TypeDef* I2Cx, 
         uint16_t toWrite, 
         uint16_t addr); 
