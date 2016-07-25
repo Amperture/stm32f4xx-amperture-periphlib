@@ -66,7 +66,7 @@ uint8_t at24c32_readByte(I2C_TypeDef* I2Cx, uint16_t addr);
  */
 uint8_t at24c32_readByteMulti(I2C_TypeDef* I2Cx, 
         uint16_t addr, 
-        uint8_t len
+        uint8_t len,
         uint8_t* toRead
 );
 

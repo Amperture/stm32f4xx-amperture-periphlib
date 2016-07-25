@@ -144,9 +144,9 @@ uint8_t at24c32_writeByteMulti(I2C_TypeDef* I2Cx,
 }
 
 
-uint8_t* at24c32_readByteMulti(I2C_TypeDef* I2Cx, 
+uint8_t at24c32_readByteMulti(I2C_TypeDef* I2Cx, 
         uint16_t addr, 
-        uint8_t len
+        uint8_t len, 
         uint8_t* toRead){
 
     // Convert 16 bit address into 8-bit chunks
@@ -185,13 +185,11 @@ uint8_t* at24c32_readByteMulti(I2C_TypeDef* I2Cx,
                 I2C_STATE_MASTER_RECEIVER_MODE_ACTIVE_SR2));
 
     uint8_t i;
-    for (i = 0; i < len, i++){
-
+    for (i = 0; i < len; ++i){
         // Wait for byte receive, then pull data.
         while ( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_RECEIVED_SR1,
                     I2C_STATE_MASTER_BYTE_RECEIVED_SR2));
         toRead[i] = i2cRecvData(I2Cx);
-
     }
 
     i2cDeactivateAck(I2Cx);
