@@ -59,7 +59,8 @@ void i2cInit(I2C_TypeDef* I2Cx,
         GPIO_TypeDef* GPIOx, 
         uint8_t sclPin, 
         uint8_t sdaPin, 
-        uint8_t afMode);
+        uint8_t afMode
+);
 
 
 /** I2C Send Start
@@ -95,7 +96,8 @@ void i2cSendAddr7bit(I2C_TypeDef* I2Cx,
  * @retval void
  */
 void i2cSendData(I2C_TypeDef* I2Cx, 
-        uint8_t addr);
+        uint8_t addr
+);
 
 
 /** I2C Receive Byte
