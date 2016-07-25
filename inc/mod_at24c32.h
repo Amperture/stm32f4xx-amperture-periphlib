@@ -10,8 +10,13 @@
 #include "i2c.h"
 
 
+#ifndef AT24C32_DEVICE_ADDRESS
 #define AT24C32_DEVICE_ADDRESS 0x57
+#endif
+
+#ifndef AT24C32_MAX_BUS_TIME
 #define AT24C32_MAX_BUS_TIME 1716
+#endif
 
 /* Write Single Byte to given 12-bit address
  *     High bits of address are DONTCARES

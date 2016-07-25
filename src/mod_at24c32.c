@@ -96,14 +96,57 @@ uint8_t at24c32_readByte(I2C_TypeDef* I2Cx, uint16_t addr){
     return i2cRecvData(I2Cx);
 }
 
-/** IGNORE EVERYTHING INSIDE COMMENT
- *
 uint8_t at24c32_writeByteMulti(I2C_TypeDef* I2Cx, 
         uint8_t* toWrite, 
         uint16_t addr, 
-        uint8_t len);
+        uint8_t len){
+
+    uint8_t i = 0;
+    uint8_t memAd[2];
+    memAd[0] = (uint8_t) ((0xFF00 & addr) >> 8);
+    memAd[1] = (uint8_t) (0x00FF & addr);
+
+    // Activate the ACK functionality on the I2C controller.
+    i2cActivateAck(I2Cx);
+
+    // Send the Start Bit
+    i2cSendStart(I2Cx);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_MODE_ACTIVE_SR2));
+
+    // Send Device Address
+    i2cSendAddr7bit(I2Cx, AT24C32_DEVICE_ADDRESS, 0);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR1,
+                I2C_STATE_MASTER_TRANSMITTER_MODE_ACTIVE_SR2));
+
+    // Send Memory Address
+    i2cSendData(I2Cx, memAd[0]);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_TRANSMITTED_SR1,
+                I2C_STATE_MASTER_BYTE_TRANSMITTED_SR2));
+    i2cSendData(I2Cx, memAd[1]);
+    while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_TRANSMITTED_SR1,
+                I2C_STATE_MASTER_BYTE_TRANSMITTED_SR2));
+
+    // Send the actual byte of data
+    for (i = 0; i < len; i++){
+        i2cSendData(I2Cx, toWrite[i]);
+        while( !i2cStateCheck(I2Cx, I2C_STATE_MASTER_BYTE_TRANSMITTED_SR1,
+                    I2C_STATE_MASTER_BYTE_TRANSMITTED_SR2));
+    }
+
+    // Send STOP and deactivate peripheral.
+    i2cDeactivateAck(I2Cx);
+    i2cSendStop(I2Cx);
+
+    _at24c32_delay();
+
+    return 0;
+
+}
 
 
+/** IGNORE EVERYTHING INSIDE COMMENT
+ *
 uint8_t* at24c32_readByteMulti(I2C_TypeDef* I2Cx, 
         uint16_t addr, 
         uint8_t len);
