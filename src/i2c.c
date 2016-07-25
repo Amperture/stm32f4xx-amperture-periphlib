@@ -55,6 +55,7 @@ void i2cInit(I2C_TypeDef* I2Cx, GPIO_TypeDef* GPIOx, uint8_t sclPin,
     // Set up the Second Control Register
     // NOTE: Users, please comment out unnecessary bits.
     I2Cx -> CR2     =   (0
+                        // Frequency bits seem to be main clock frequency
                         | (0x0010)    // Frequency
                         // | I2C_CR2_ITERREN       // Error Int Enable
                         // | I2C_CR2_ITEVTEN       // Event Int Enable
@@ -85,6 +86,9 @@ void i2cInit(I2C_TypeDef* I2Cx, GPIO_TypeDef* GPIOx, uint8_t sclPin,
     // CCR[14] -> Duty Cycle (Fast mode only)
     // CCR[11:0] -> Clock Control Speed
     I2Cx -> CCR     =   (0x800d);
+
+    // Rise Time Register
+    // See: I2C.CR2 FREQ bits: 
     I2Cx -> TRISE   =   (5);
     I2Cx -> OAR1    =   (1);
 
@@ -128,9 +132,11 @@ uint8_t i2cStateCheck(I2C_TypeDef* I2Cx, uint16_t stateSR1, uint16_t stateSR2){
     uint16_t i2cSR1Mask = (I2Cx -> SR1) & stateSR1;
     uint16_t i2cSR2Mask = (I2Cx -> SR2) & stateSR2;
 
+    // If State does not match input, return 0
     if ( (stateSR1 != 0) && (i2cSR1Mask != stateSR1) ) return 0;
     if ( (stateSR2 != 0) && (i2cSR2Mask != stateSR2) ) return 0;
 
+    // If State does match input, return 1;
     return 1;
 }
 
