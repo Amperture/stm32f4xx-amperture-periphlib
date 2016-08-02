@@ -1,0 +1,13 @@
+When we have the below transisiton, the EEPROM does not increment.
+0bxx111111
+0bxx000000
+
+- Know how many bytes to read to the system.
+- If write length passes page boundary, handle it.
+    - How to handle it?
+        - For loop?
+        - Recursive?
+
+Allow user, at maximum, to write 32 bytes to system.
+
+32 - (0x1F & addr) // Should return how many bytes left in page.
